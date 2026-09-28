@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جنگل کلمات فارسی پنجم</title>
+<style>
+*{box-sizing:border-box;font-family:Tahoma,Arial,sans-serif}
+body{margin:0;min-height:100vh;overflow-x:hidden;background:linear-gradient(#9ee7ff 0 55%,#b9f0b2 100%);display:flex;justify-content:center;align-items:center;padding:24px}
+.sun{position:fixed;top:24px;right:35px;width:90px;height:90px;background:#ffd84d;border-radius:50%;box-shadow:0 0 35px #ffe985}
+.cloud{position:fixed;background:#fff;border-radius:50px;width:150px;height:45px;opacity:.9}
+.cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud:before{width:65px;height:65px;top:-30px;right:25px}.cloud:after{width:50px;height:50px;top:-20px;right:75px}
+.cloud1{top:80px;left:50px}.cloud2{top:150px;left:25%;transform:scale(.7)}
+.animal{position:fixed;font-size:72px;z-index:2;animation:float 3s ease-in-out infinite;user-select:none}
+.rabbit{left:3%;bottom:10%}.fox{right:3%;bottom:11%;animation-delay:.7s}.bear{left:5%;top:31%;font-size:62px;animation-delay:1s}.monkey{right:5%;top:32%;font-size:62px;animation-delay:1.5s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.game{position:relative;z-index:5;width:92%;max-width:760px;min-height:640px;background:rgba(255,255,255,.96);border:7px solid #fff;border-radius:35px;box-shadow:0 15px 40px rgba(0,0,0,.18),0 0 0 5px #78d6c1;padding:28px;text-align:center}
+h1{margin:0;color:#ff6b6b;font-size:38px;text-shadow:2px 2px #ffe28a}.subtitle{color:#52758a;font-size:18px;margin-top:8px;font-weight:bold}
+.info{display:flex;justify-content:space-between;align-items:center;margin-top:22px;background:#f0fbff;border-radius:20px;padding:13px 20px;border:3px dashed #74c9e8;color:#34718a;font-weight:bold}
+.hearts{font-size:25px;letter-spacing:3px}.question-box{margin-top:28px}.question{font-size:22px;color:#555;font-weight:bold}
+.word{display:inline-block;margin-top:15px;padding:15px 45px;border-radius:25px;background:linear-gradient(135deg,#ffe47a,#ffc95c);color:#714d00;font-size:34px;font-weight:bold;box-shadow:0 7px #e6a936}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+.option{border:none;border-radius:20px;padding:18px 12px;font-size:19px;font-weight:bold;cursor:pointer;color:#40515b;background:#e8f6ff;border:3px solid #bde5f5;box-shadow:0 5px #acd2e2;transition:.2s}
+.option:hover{transform:translateY(-4px) scale(1.02);background:#d8f2ff}.option:disabled{cursor:default}
+.correct{background:#9df0ae!important;border-color:#5dcc72!important;box-shadow:0 5px #48ae5d!important}
+.wrong{background:#ffaaaa!important;border-color:#ef6868!important;box-shadow:0 5px #d94b4b!important}
+.message{min-height:40px;margin-top:22px;font-size:21px;font-weight:bold}.next,.restart{border:none;color:#fff;padding:14px 35px;border-radius:18px;font-size:19px;font-weight:bold;cursor:pointer}
+.next{display:none;background:#ff8f5c;box-shadow:0 5px #dc6840}.restart{background:#65c96e;box-shadow:0 5px #439b4c}
+.next:hover,.restart:hover{transform:scale(1.04)}
+.end-screen{display:none;padding-top:55px}.end-emoji{font-size:85px}.end-screen h2{font-size:38px;color:#ff6b6b}.final-score{font-size:45px;font-weight:bold;color:#ffae32;margin:20px}
+.shake{animation:shake .4s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}50%{transform:translateX(10px)}75%{transform:translateX(-10px)}}
+@media(max-width:600px){.game{width:95%;padding:20px}h1{font-size:30px}.options{grid-template-columns:1fr}.animal{font-size:45px}.bear,.monkey{display:none}.word{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="sun"></div><div class="cloud cloud1"></div><div class="cloud cloud2"></div>
+<div class="animal rabbit">🐰</div><div class="animal fox">🦊</div><div class="animal bear">🐻</div><div class="animal monkey">🐵</div>
+
+<div class="game" id="gameBox">
+<div id="gameScreen">
+<h1>🌈 جنگل کلمات 🌈</h1>
+<div class="subtitle">🎒 بازی آموزشی فارسی ـ پایه پنجم</div>
+<div class="info">
+<span>⭐ امتیاز: <span id="score">0</span></span>
+<span>سؤال <span id="number">1</span> از 6</span>
+<span class="hearts" id="hearts">❤️❤️❤️</span>
+</div>
+<div class="question-box">
+<div class="question">معنی کلمه‌ی زیر چیست؟</div>
+<div class="word" id="word"></div>
+</div>
+<div class="options" id="options"></div>
+<div class="message" id="message"></div>
+<button class="next" id="nextButton" onclick="nextQuestion()">سؤال بعدی ➡️</button>
+</div>
+
+<div class="end-screen" id="endScreen">
+<div class="end-emoji" id="endEmoji"></div>
+<h2 id="endTitle"></h2>
+<p id="endText"></p>
+<div class="final-score">⭐ <span id="finalScore"></span></div>
+<button class="restart" onclick="restartGame()">🔄 دوباره بازی کن</button>
+</div>
+</div>
+
+<script>
+const questions=[
+{word:"بیم",answer:"ترس",options:["ترس","شادی","دوستی","خشم"]},
+{word:"از پی",answer:"به دنبال",options:["به دنبال","در کنار","دور از","در برابر"]},
+{word:"کریم",answer:"بخشنده",options:["بخشنده","ناتوان","خسته","کوچک"]},
+{word:"ضعیف",answer:"ناتوان",options:["توانا","ناتوان","شاد","بزرگ"]},
+{word:"هستی",answer:"تمام موجودات",options:["تمام موجودات","یک انسان","یک حیوان","یک مکان"]},
+{word:"برانی",answer:"دور کنی",options:["دور کنی","نزدیک کنی","پیدا کنی","نگه داری"]}
+];
+let current=0,score=0,mistakes=0,answered=false;
+
+function loadQuestion(){
+ answered=false;
+ const q=questions[current];
+ document.getElementById("word").textContent=q.word;
+ document.getElementById("number").textContent=current+1;
+ document.getElementById("message").textContent="";
+ document.getElementById("nextButton").style.display="none";
+ const box=document.getElementById("options"); box.innerHTML="";
+ [...q.options].sort(()=>Math.random()-.5).forEach(opt=>{
+  const b=document.createElement("button"); b.className="option"; b.textContent=opt;
+  b.onclick=()=>checkAnswer(b,opt); box.appendChild(b);
+ });
+}
+function checkAnswer(button,selected){
+ if(answered)return;
+ answered=true;
+ const q=questions[current];
+ document.querySelectorAll(".option").forEach(b=>{
+  b.disabled=true;
+  if(b.textContent===q.answer)b.classList.add("correct");
+ });
+ if(selected===q.answer){
+  score++; document.getElementById("score").textContent=score;
+  document.getElementById("message").textContent="🌟 آفرین! جواب درست بود! 🥳";
+  document.getElementById("message").style.color="#35a653";
+  document.getElementById("nextButton").style.display="inline-block";
+ }else{
+  mistakes++; button.classList.add("wrong"); updateHearts();
+  const game=document.getElementById("gameBox"); game.classList.add("shake");
+  setTimeout(()=>game.classList.remove("shake"),400);
+  if(mistakes>=2){setTimeout(loseGame,850);}
+  else{
+   document.getElementById("message").textContent="❌ یک اشتباه کردی! حواست رو جمع کن 🐰";
+   document.getElementById("message").style.color="#e05252";
+   document.getElementById("nextButton").style.display="inline-block";
+  }
+ }
+}
+function updateHearts(){
+ let s=""; for(let i=0;i<3-mistakes;i++)s+="❤️"; for(let i=0;i<mistakes;i++)s+="🖤";
+ document.getElementById("hearts").textContent=s;
+}
+function nextQuestion(){current++; if(current<questions.length)loadQuestion();else winGame();}
+function winGame(){
+ document.getElementById("gameScreen").style.display="none";
+ document.getElementById("endScreen").style.display="block";
+ document.getElementById("endEmoji").textContent="🏆🎉";
+ document.getElementById("endTitle").textContent="قهرمان جنگل کلمات شدی!";
+ document.getElementById("endText").textContent="همه‌ی سؤال‌ها را با موفقیت پشت سر گذاشتی! 🌈👏";
+ document.getElementById("finalScore").textContent=score+" از 6";
+}
+function loseGame(){
+ document.getElementById("gameScreen").style.display="none";
+ document.getElementById("endScreen").style.display="block";
+ document.getElementById("endEmoji").textContent="😢🐰";
+ document.getElementById("endTitle").textContent="این بار نشد!";
+ document.getElementById("endText").textContent="دو تا اشتباه کردی؛ دوباره امتحان کن و قهرمان شو! 💪🌈";
+ document.getElementById("finalScore").textContent=score+" امتیاز";
+}
+function restartGame(){
+ current=0;score=0;mistakes=0;
+ document.getElementById("score").textContent="0";
+ document.getElementById("hearts").textContent="❤️❤️❤️";
+ document.getElementById("endScreen").style.display="none";
+ document.getElementById("gameScreen").style.display="block";
+ loadQuestion();
+}
+loadQuestion();
+</script>
+</body>
+</html>
